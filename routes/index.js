@@ -9,19 +9,26 @@
  *              schema:
  *               type: object
  *               properties:
- *                 rootPath:
+ *                 appPath:
  *                   type: string
+ *                 modules:
+ *                   type: array
+ *                   items:
+ *                     module:
+ *                       type: string
  *     summary: Returns a sample message
  *     responses:
  *       200:
  *         description: A successful response
  */
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const { getService } = require('../service/getService')
 
 router.post('/get-service', (req, res) => {
-    res.json({ list: getService() });
-});
+    const { appPath, modules } = req.body
 
-module.exports = router;
+    res.json({ list: getService(appPath, modules) })
+})
+
+module.exports = router
