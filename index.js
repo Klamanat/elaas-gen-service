@@ -5,7 +5,7 @@ const appRouter = require('./routes/index')
 var bodyParser = require('body-parser')
 
 const app = express()
-const port = 3030
+const port = 3000
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
