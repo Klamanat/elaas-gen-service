@@ -204,62 +204,60 @@ const removeDuplicates = (arr) => {
 
 const { uniqWith } = require('lodash')
 
-const getService = (appPath, module = []) => {
+const getService = (appPath) => {
     let result = []
     this.ROOT_PATH = `${appPath.substring(0, appPath.indexOf('/src'))}/src`
 
-    module.forEach(m => {
-        this.APP_PATH = `${appPath}/${m}`
-        const dirAll = fs.readdirSync(this.APP_PATH)
+    this.APP_PATH = `${appPath}`
+    const dirAll = fs.readdirSync(this.APP_PATH)
 
-        dirAll.forEach((dir) => {
-            const path_1 = `${this.APP_PATH}/${dir}`
-            if (fs.lstatSync(path_1).isDirectory()) {
-                const dirAll_1 = fs.readdirSync(path_1)
+    dirAll.forEach((dir) => {
+        const path_1 = `${this.APP_PATH}/${dir}`
+        if (fs.lstatSync(path_1).isDirectory()) {
+            const dirAll_1 = fs.readdirSync(path_1)
 
-                // LEVEL 1
-                dirAll_1.forEach((dir_1) => {
-                    const path_2 = `${this.APP_PATH}/${dir}/${dir_1}`
-                    if (fs.lstatSync(path_2).isDirectory()) {
-                        const dirAll_2 = fs.readdirSync(path_2)
+            // LEVEL 1
+            dirAll_1.forEach((dir_1) => {
+                const path_2 = `${this.APP_PATH}/${dir}/${dir_1}`
+                if (fs.lstatSync(path_2).isDirectory()) {
+                    const dirAll_2 = fs.readdirSync(path_2)
 
-                        // LEVEL 2
-                        dirAll_2.forEach((dir_2) => {
-                            const path_3 = `${this.APP_PATH}/${dir}/${dir_1}/${dir_2}`
-                            if (fs.lstatSync(path_3).isDirectory()) {
-                                // const dirAll_3 = fs.readdirSync(path_3)
+                    // LEVEL 2
+                    dirAll_2.forEach((dir_2) => {
+                        const path_3 = `${this.APP_PATH}/${dir}/${dir_1}/${dir_2}`
+                        if (fs.lstatSync(path_3).isDirectory()) {
+                            // const dirAll_3 = fs.readdirSync(path_3)
 
-                                // LEVEL 3
-                                // dirAll_3.forEach((dir_2) => {
+                            // LEVEL 3
+                            // dirAll_3.forEach((dir_2) => {
 
-                                // })
-                            } else {
-                                const files = fs.readFileSync(path_3)
+                            // })
+                        } else {
+                            const files = fs.readFileSync(path_3)
 
-                                const r2 = readComponentFile(dir_2, files, dir)
+                            const r2 = readComponentFile(dir_2, files, dir)
 
-                                if (r2 && r2.length)
-                                    result = [...result, ...r2]
-                            }
-                        })
-                    } else {
-                        const files = fs.readFileSync(path_2)
+                            if (r2 && r2.length)
+                                result = [...result, ...r2]
+                        }
+                    })
+                } else {
+                    const files = fs.readFileSync(path_2)
 
-                        const r1 = readComponentFile(dir_1, files, dir)
+                    const r1 = readComponentFile(dir_1, files, dir)
 
-                        if (r1 && r1.length)
-                            result = [...result, ...r1]
-                    }
-                })
-            } else {
-                const files = fs.readFileSync(path_1)
+                    if (r1 && r1.length)
+                        result = [...result, ...r1]
+                }
+            })
+        } else {
+            const files = fs.readFileSync(path_1)
 
-                const r = readComponentFile(dir, files, dir)
+            const r = readComponentFile(dir, files, dir)
 
-                if (r && r.length)
-                    result = [...result, ...r]
-            }
-        })
+            if (r && r.length)
+                result = [...result, ...r]
+        }
     })
 
     return uniqWith(result, (item1, item2) => item1.url === item2.url && item1.folder === item2.folder)
