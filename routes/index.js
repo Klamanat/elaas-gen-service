@@ -60,4 +60,30 @@ router.post('/get-service', (req, res) => {
     });
 })
 
+/**
+ * @swagger
+ * /api/app/get-service-json:
+ *   post:
+ *     requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                 appPath:
+ *                   type: string
+ *                 module:
+ *                   type: string
+ *     summary: Returns a sample message
+ *     responses:
+ *       200:
+ *         description: A successful response
+ */
+router.post('/get-service-json', (req, res) => {
+    const { appPath, module } = req.body
+
+    res.json({ list: getService(`${appPath}/${module}`) })
+})
+
 module.exports = router

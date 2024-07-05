@@ -23,22 +23,27 @@ const readComponentFile = (fileName, file, folder) => {
                 const service = m.substring(m.indexOf('{') + 1, m.indexOf('}'))
                 const path = m.substring(m.indexOf('\'')).replace(/\'/g, '').replace('@/', `${this.ROOT_PATH}/`)
 
-                const s = service.replace(/ /g, '')
+                const serviceList = service.replace(/ /g, '').split(',')
 
-                const regex = new RegExp('const \\w+ = new ' + s, 'g')
-                const matchService = _file.match(regex)
+                serviceList.forEach(s => {
+                    const regex = new RegExp('const \\w+ = new ' + s.replace(/\'/g, ''), 'g')
 
-                if (matchService && matchService.length) {
-                    const sName = getServiceVariable(matchService[0]).replace(/ /g, '')
-                    const regex1 = new RegExp('(' + sName + '.\\w+)', 'g')
-                    const regexRm = new RegExp(sName + '.', 'g')
-                    const match1 = _file.match(regex1)
-                    const serviceName = match1 ? removeDuplicates(match1).map(m => m.replace(regexRm, '')) : []
+                    const matchService = _file.match(regex)
 
-                    const serviceObj = getServiceUrl({ folder, service: s, path, fileName, serviceName: serviceName.join(', '), serviceNames: serviceName })
+                    if (matchService && matchService.length) {
+                        matchService.forEach(_matchService => {
+                            const sName = getServiceVariable(_matchService).replace(/ /g, '')
+                            const regex1 = new RegExp('(' + sName + '.\\w+)', 'g')
+                            const regexRm = new RegExp(sName + '.', 'g')
+                            const match1 = _file.match(regex1)
+                            const serviceName = match1 ? removeDuplicates(match1).map(m => m.replace(regexRm, '')) : []
 
-                    result = [...result, ...serviceObj]
-                }
+                            const serviceObj = getServiceUrl({ folder, service: s, path, fileName, serviceName: serviceName.join(', '), serviceNames: serviceName })
+
+                            result = [...result, ...serviceObj]
+                        })
+                    }
+                })
             })
         }
         // ######################### END FIND INDEX VIEW FILE ###########################
@@ -63,6 +68,7 @@ const readComponentFile = (fileName, file, folder) => {
 
                     // ######################### END FIND SUB CONTENT ###########################
                     const matchSubComponent = files ? content.match(regex_component) : null
+
                     if (matchSubComponent) {
                         matchSubComponent.forEach((mComponent) => {
                             let _mComponent = mComponent.replace(/from /, '').replace(/\'/g, '')
@@ -88,23 +94,27 @@ const readComponentFile = (fileName, file, folder) => {
                                     const service = m.substring(m.indexOf('{') + 1, m.indexOf('}'))
                                     const path = m.substring(m.indexOf('\'')).replace(/\'/g, '').replace('@/', `${this.ROOT_PATH}/`)
 
-                                    const s = service.replace(/ /g, '')
+                                    const serviceList = service.replace(/ /g, '').split(',')
 
-                                    const regex = new RegExp('const \\w+ = new ' + s, 'g')
-                                    const matchService = _matchSubContent.match(regex)
+                                    serviceList.forEach(s => {
+                                        const regex = new RegExp('const \\w+ = new ' + s.replace(/\'/g, ''), 'g')
 
+                                        const matchService = _matchSubContent.match(regex)
 
-                                    if (matchService && matchService.length) {
-                                        const sName = getServiceVariable(matchService[0]).replace(/ /g, '')
-                                        const regex1 = new RegExp('(' + sName + '.\\w+)', 'g')
-                                        const regexRm = new RegExp(sName + '.', 'g')
-                                        const match1 = content.match(regex1)
-                                        const serviceName = match1 ? removeDuplicates(match1).map(m => m.replace(regexRm, '')) : []
+                                        if (matchService && matchService.length) {
+                                            matchService.forEach(_matchService => {
+                                                const sName = getServiceVariable(_matchService).replace(/ /g, '')
+                                                const regex1 = new RegExp('(' + sName + '.\\w+)', 'g')
+                                                const regexRm = new RegExp(sName + '.', 'g')
+                                                const match1 = _matchSubContent.match(regex1)
+                                                const serviceName = match1 ? removeDuplicates(match1).map(m => m.replace(regexRm, '')) : []
 
-                                        const serviceObj = getServiceUrl({ folder, service: s, path, fileName: componentFile, serviceName: serviceName.join(', '), serviceNames: serviceName })
+                                                const serviceObj = getServiceUrl({ folder, service: s, path, fileName: componentFile, serviceName: serviceName.join(', '), serviceNames: serviceName })
 
-                                        result = [...result, ...serviceObj]
-                                    }
+                                                result = [...result, ...serviceObj]
+                                            })
+                                        }
+                                    })
                                 })
                             }
                         })
